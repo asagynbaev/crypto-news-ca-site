@@ -219,12 +219,18 @@ def fetch_images(client: httpx.Client, posts: list[Post]) -> None:
         name = f"{p.id}-{h}.jpg"
         cached = CACHE / name
         if not cached.exists():
-            try:
-                r = client.get(p.photo_url)
-                r.raise_for_status()
-                cached.write_bytes(r.content)
-            except httpx.HTTPError as e:
-                print(f"img {p.id}: {e}", file=sys.stderr)
+            # CDN Telegram изредка отвечает 500 на конкретный файл — пара повторов спасает.
+            for attempt in range(3):
+                try:
+                    r = client.get(p.photo_url)
+                    r.raise_for_status()
+                    cached.write_bytes(r.content)
+                    break
+                except httpx.HTTPError as e:
+                    if attempt == 2:
+                        print(f"img {p.id}: {e}", file=sys.stderr)
+                    time.sleep(2 * (attempt + 1))
+            if not cached.exists():
                 continue
         shutil.copyfile(cached, OUT / "img" / name)
         p.image = f"/img/{name}"

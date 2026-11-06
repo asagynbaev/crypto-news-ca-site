@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Страница не найдена — {{ site_name }}{% endblock %}
+{% block main %}
+<section class="intro">
+  <h1>Такой страницы нет</h1>
+  <p>Возможно, пост удалили или ссылка с опечаткой. <a href="{{ base }}/">Все новости</a> или
+    <a href="https://t.me/{{ channel }}">канал в Telegram</a>.</p>
+</section>
+{% endblock %}

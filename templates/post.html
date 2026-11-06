@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} — {{ site_name }}{% endblock %}
+{% block description %}{{ post.description }}{% endblock %}
+{% block og %}
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.description }}">
+<meta property="og:url" content="{{ canonical }}">
+<meta property="og:image" content="{{ site_url }}{{ post.image or '/static/logo.png' }}">
+<meta property="article:published_time" content="{{ post.date.isoformat() }}">
+{% endblock %}
+{% block head %}<script type="application/ld+json">{{ ld_json | safe }}</script>{% endblock %}
+{% block main %}
+<article class="post">
+  <div class="meta">
+    {% for s in post.sections %}<a class="kicker" href="{{ base }}/{{ s }}/">{{ sections[s][0] }}</a>{% endfor %}
+    <time datetime="{{ post.date.isoformat() }}">{{ post.date | ru_date }}</time>
+  </div>
+  <h1>{{ post.title }}</h1>
+  {% if post.image %}
+  <img class="hero" src="{{ base }}{{ post.image }}" alt="{{ post.title }}" width="1536" height="864">
+  {% endif %}
+  <div class="body">{{ post.body_html | safe }}</div>
+  <p class="tg-link"><a href="{{ post.tg_url }}" rel="noopener">Обсудить и поделиться в Telegram →</a></p>
+</article>
+
+<aside class="cta">
+  <div>
+    <strong>Такие новости — каждый день в Telegram</strong>
+    <p>Крипта Кыргызстана, Казахстана и Узбекистана: законы, биржи, мошенники. Коротко и по фактам.</p>
+  </div>
+  <a class="btn" href="https://t.me/{{ channel }}" rel="noopener">Подписаться на @{{ channel }}</a>
+</aside>
+
+{% if related %}
+<section class="related">
+  <h2>Читайте также</h2>
+  <div class="grid">
+  {% for p in related %}
+    <article class="card{% if not p.image %} noimg{% endif %}">
+      <a href="{{ base }}{{ p.url }}" class="card-link">
+        {% if p.image %}<img src="{{ base }}{{ p.image }}" alt="" loading="lazy" width="768" height="432">{% endif %}
+        <div class="card-body">
+          <div class="meta"><time datetime="{{ p.date.isoformat() }}">{{ p.date | ru_date }}</time></div>
+          <h2>{{ p.title }}</h2>
+        </div>
+      </a>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{% if section %}{{ heading }} — {{ site_name }}{% else %}{{ site_name }} — новости крипты Кыргызстана, Казахстана, Узбекистана{% endif %}{% if page > 1 %} · стр. {{ page }}{% endif %}{% endblock %}
+{% block description %}{{ intro }}{% endblock %}
+{% block head %}{% if not section and page == 1 %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"{{ site_name }}","url":"{{ site_url }}/","inLanguage":"ru"}</script>
+{% endif %}{% endblock %}
+{% block main %}
+<section class="intro">
+  <h1>{{ heading }}</h1>
+  <p>{{ intro }}</p>
+</section>
+
+<div class="grid">
+{% for p in posts %}
+  {% set lead = loop.first and page == 1 and p.image %}
+  <article class="card{% if lead %} lead{% endif %}{% if not p.image %} noimg{% endif %}">
+    <a href="{{ base }}{{ p.url }}" class="card-link">
+      {% if p.image %}<img src="{{ base }}{{ p.image }}" alt="" loading="{% if loop.index > 3 %}lazy{% else %}eager{% endif %}" width="768" height="432">{% endif %}
+      <div class="card-body">
+        <div class="meta">
+          {% for s in p.sections %}<span class="kicker">{{ sections[s][0] }}</span>{% endfor %}
+          <time datetime="{{ p.date.isoformat() }}">{{ p.date | ru_date }}</time>
+        </div>
+        <h2>{{ p.title }}</h2>
+        {% if not p.image or lead %}<p class="excerpt">{{ p.description }}</p>{% endif %}
+      </div>
+    </a>
+  </article>
+{% endfor %}
+</div>
+
+{% if pages > 1 %}
+<nav class="pager" aria-label="Страницы">
+  {% if page > 1 %}<a class="btn ghost" href="{{ base }}{{ list_base }}{% if page > 2 %}page/{{ page - 1 }}/{% endif %}">← Новее</a>{% endif %}
+  <span class="muted">{{ page }} / {{ pages }}</span>
+  {% if page < pages %}<a class="btn ghost" href="{{ base }}{{ list_base }}page/{{ page + 1 }}/">Старше →</a>{% endif %}
+</nav>
+{% endif %}
+
+<aside class="cta">
+  <div>
+    <strong>Новости приходят в Telegram раньше, чем сюда</strong>
+    <p>Подпишитесь на канал — ежедневные новости, ликбез по средам и субботам, дайджест по воскресеньям.</p>
+  </div>
+  <a class="btn" href="https://t.me/{{ channel }}" rel="noopener">Открыть @{{ channel }}</a>
+</aside>
+{% endblock %}

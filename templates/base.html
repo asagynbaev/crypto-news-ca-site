@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site_name }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ site_desc }}{% endblock %}">
+<link rel="canonical" href="{{ canonical }}">
+<link rel="alternate" type="application/rss+xml" title="{{ site_name }}" href="{{ base }}/feed.xml">
+<link rel="icon" type="image/png" href="{{ base }}/static/logo.png">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta property="og:locale" content="ru_RU">
+{% block og %}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ site_name }}">
+<meta property="og:description" content="{{ site_desc }}">
+<meta property="og:image" content="{{ site_url }}/static/logo.png">
+{% endblock %}
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ base }}/static/style.css">
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="{{ base }}/">
+      <img src="{{ base }}/static/logo.png" alt="" width="36" height="36">
+      <span>{{ site_name }}</span>
+    </a>
+    <a class="btn" href="https://t.me/{{ channel }}" rel="noopener">Подписаться в Telegram</a>
+  </div>
+  <nav class="wrap chips" aria-label="Разделы">
+    <a href="{{ base }}/" class="{% if not section and not post %}on{% endif %}">Все</a>
+    {% for key, (name, tag, flag) in sections.items() %}
+    <a href="{{ base }}/{{ key }}/" class="{% if section == key %}on{% endif %}">{{ name }}</a>
+    {% endfor %}
+  </nav>
+</header>
+<main class="wrap">
+{% block main %}{% endblock %}
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <p><strong>{{ site_name }}</strong> — копия Telegram-канала
+      <a href="https://t.me/{{ channel }}">@{{ channel }}</a>. {{ site_desc }}</p>
+    <p class="muted">Без сигналов, прогнозов и рекламы токенов. Не финансовый совет.
+      · <a href="{{ base }}/feed.xml">RSS</a> · © {{ year }}</p>
+  </div>
+</footer>
+</body>
+</html>
